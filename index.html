@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AYHAM VIRUS CHECKER</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #f1f5f9;
+      text-align: center;
+      padding: 40px;
+    }
+    h1 {
+      color: #38bdf8;
+      font-size: 2.5em;
+    }
+    .upload-box {
+      margin: 30px auto;
+      padding: 20px;
+      border: 2px dashed #38bdf8;
+      border-radius: 10px;
+      width: 300px;
+      background: #1e293b;
+    }
+    input[type="file"] {
+      margin: 10px 0;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      background: #334155;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🛡️ AYHAM VIRUS CHECKER</h1>
+  <p>Upload a file to check for suspicious patterns.</p>
+
+  <div class="upload-box">
+    <input type="file" id="fileInput">
+    <button onclick="checkFile()">Scan File</button>
+  </div>
+
+  <div class="result" id="resultBox">
+    <strong>Result:</strong> No file scanned yet.
+  </div>
+
+  <script>
+    function checkFile() {
+      const fileInput = document.getElementById('fileInput');
+      const resultBox = document.getElementById('resultBox');
+
+      if (!fileInput.files.length) {
+        resultBox.innerHTML = "<strong>Result:</strong> Please upload a file.";
+        return;
+      }
+
+      const file = fileInput.files[0];
+      // Simple demo logic: flag based on file extension
+      const ext = file.name.split('.').pop().toLowerCase();
+      let suspicious = ["exe","js","vbs","bat","cmd","ps1","sh"];
+      let result = suspicious.includes(ext) ? "Suspicious" : "Safe";
+
+      resultBox.innerHTML = `
+        <strong>Result:</strong> ${result}<br>
+        File Name: ${file.name}<br>
+        Size: ${(file.size/1024).toFixed(2)} KB
+      `;
+    }
+  </script>
+</body>
+</html>
