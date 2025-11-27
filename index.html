@@ -21,7 +21,7 @@
       padding: 20px;
       border: 2px dashed #38bdf8;
       border-radius: 10px;
-      width: 300px;
+      width: 320px;
       background: #1e293b;
     }
     input[type="file"] {
@@ -32,6 +32,21 @@
       padding: 15px;
       background: #334155;
       border-radius: 8px;
+    }
+    .bar {
+      height: 20px;
+      border-radius: 5px;
+      margin-top: 10px;
+      overflow: hidden;
+      display: flex;
+    }
+    .safe {
+      background: #22c55e;
+      height: 100%;
+    }
+    .suspicious {
+      background: #ef4444;
+      height: 100%;
     }
   </style>
 </head>
@@ -59,15 +74,30 @@
       }
 
       const file = fileInput.files[0];
-      // Simple demo logic: flag based on file extension
       const ext = file.name.split('.').pop().toLowerCase();
-      let suspicious = ["exe","js","vbs","bat","cmd","ps1","sh"];
-      let result = suspicious.includes(ext) ? "Suspicious" : "Safe";
 
+      // Simple heuristic scoring
+      let score = 0;
+      const suspiciousExt = ["exe","js","vbs","bat","cmd","ps1","sh","py"];
+      if (suspiciousExt.includes(ext)) score += 40;
+      if (file.size > 5_000_000) score += 20; // large file
+      if (ext === "txt" || ext === "pdf") score += 0; // safe types
+
+      // Clamp score
+      if (score > 100) score = 100;
+      const suspiciousPercent = score;
+      const safePercent = 100 - suspiciousPercent;
+
+      // Show results
       resultBox.innerHTML = `
-        <strong>Result:</strong> ${result}<br>
-        File Name: ${file.name}<br>
-        Size: ${(file.size/1024).toFixed(2)} KB
+        <strong>File:</strong> ${file.name}<br>
+        <strong>Size:</strong> ${(file.size/1024).toFixed(2)} KB<br>
+        <strong>Result:</strong> ${suspiciousPercent > 50 ? "Suspicious" : "Safe"}<br>
+        Safe: ${safePercent}% | Suspicious: ${suspiciousPercent}%
+        <div class="bar">
+          <div class="safe" style="width:${safePercent}%"></div>
+          <div class="suspicious" style="width:${suspiciousPercent}%"></div>
+        </div>
       `;
     }
   </script>
